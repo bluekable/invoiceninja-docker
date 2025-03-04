@@ -11,9 +11,9 @@ services:
     image: invoiceninja/invoiceninja-debian:${TAG:-latest}
     restart: unless-stopped
     env_file:
-      - ./.env.prod
+      - ./.env
     volumes:
-      - ./.env.prod:/var/www/html/.env
+      - ./.env:/var/www/html/.env
       # - ./php/php.ini:/usr/local/etc/php/conf.d/invoiceninja.ini:ro
       # - ./php/php-fpm.conf:/usr/local/etc/php-fpm.d/invoiceninja.conf:ro
       # - ./supervisor/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
@@ -51,7 +51,7 @@ services:
     image: certbot/certbot
     restart: unless-stopped
     env_file:
-      - ./.env.prod
+      - ./.env
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
@@ -66,7 +66,7 @@ services:
     image: mysql:8
     restart: unless-stopped
     env_file:
-      - ./.env.prod
+      - ./.env
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}

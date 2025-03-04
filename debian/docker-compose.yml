@@ -11,9 +11,9 @@ services:
     image: invoiceninja/invoiceninja-debian:${TAG:-latest}
     restart: unless-stopped
     env_file:
-      - ./.env
+      - ./.env.prod
     volumes:
-      - ./.env:/var/www/html/.env
+      - ./.env.prod:/var/www/html/.env
       # - ./php/php.ini:/usr/local/etc/php/conf.d/invoiceninja.ini:ro
       # - ./php/php-fpm.conf:/usr/local/etc/php-fpm.d/invoiceninja.conf:ro
       # - ./supervisor/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
@@ -39,17 +39,34 @@ services:
       - ./nginx:/etc/nginx/conf.d:ro
       - app_public:/var/www/html/public:ro
       - app_storage:/var/www/html/storage:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
     networks:
       - app-network
     depends_on:
       - app
     logging: *default-logging
 
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    env_file:
+      - ./.env.prod
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    networks:
+      - app-network
+    depends_on:
+      - nginx
+    logging: *default-logging
+    command: certonly --webroot --webroot-path=/var/www/certbot --force-renewal --email ${CERTBOT_EMAIL} --agree-tos --no-eff-email -d ${CERTBOT_DOMAIN}
+
   mysql:
     image: mysql:8
     restart: unless-stopped
     env_file:
-      - ./.env
+      - ./.env.prod
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}

@@ -12,7 +12,7 @@ charts/**/charts/
 
 # Compose filesystem
 /docker
-/debin/certbot
+/debian/certbot
 
 # Laravel
 .env

@@ -14,4 +14,4 @@ charts/**/charts/
 /docker
 
 # Laravel
-.env.prod
+.env
